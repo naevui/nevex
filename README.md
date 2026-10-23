@@ -1,54 +1,57 @@
 # Nevex
 
-Nevex, sıfırdan tasarlanmış register-based bir ISA (Instruction Set Architecture), bu ISA için yazılmış bir sanal makine (VM), assembler ve C-benzeri küçük bir dil için compiler içeren bir projedir. Uzun vadeli hedef, ISA'yı FPGA üzerinde gerçek donanıma taşımak ve üzerinde basit bir işletim sistemi çalıştırmaktır.
+Nevex is a register-based instruction set architecture (ISA) designed from scratch, together with a virtual machine, an assembler and, as a later step, a compiler for a small C-like language. The long-term goal is to move the ISA onto real hardware (FPGA) and run a simple operating system on it.
 
-> Proje ilk olarak "Vex" adıyla planlandı, ancak GitHub'da VexRiscv ve eski HP VEX ISA ile isim çakışması nedeniyle "Nevex" olarak değiştirildi.
+[Türkçe](README.tr.md)
 
-## Neden
+> The project was first planned as "Vex". The name was changed to Nevex because of collisions with VexRiscv and the HP VEX ISA.
 
-Çoğu hobi-VM projesi stack-based bir sanal makineyle sınırlı kalıyor. Nevex, gerçek donanım CPU tasarımına daha yakın bir öğrenme/deney zemini sunmak için register-based bir mimari seçiyor — RISC-V ve ARM'ın tasarım felsefesine yakın durarak, ileride FPGA'ya taşınabilir bir temel oluşturmayı hedefliyor.
+## Why
 
-## Mimari
+Most hobby VMs stop at a stack machine. Nevex uses a register architecture instead, closer to the design philosophy of RISC-V and ARM, so that the same specification can later be implemented in hardware without redesign. It serves as a testbed for ISA design decisions that can be checked on a VM first and on silicon later.
 
-- **Tip:** Register-based (RISC-V/ARM tarzı, stack-based değil)
-- **Bellek modeli:** Flat memory — MMU veya sanal bellek yok
-- **Ayrıcalık seviyeleri:** User mode / kernel mode ayrımı var, bunun ötesinde donanım karmaşıklığı yok
+## Design constraints
 
-Bu kısıtlar bilinçli: hem VM üzerinde hem de ileride gerçek FPGA donanımında birebir aynı davranışı sağlamak için mimari baştan minimal tutuluyor.
+- **Register-based**, RISC-V/ARM style, not stack-based.
+- **Flat memory.** No MMU, no virtual memory.
+- **Two privilege levels:** user mode and kernel mode, and nothing beyond that.
 
-## Bileşenler
+The constraints are deliberate. The architecture is kept minimal so that the VM and a future FPGA implementation can behave identically.
 
-| Bileşen | Açıklama | Durum |
+## Components
+
+| Component | Source | Status |
 |---|---|---|
-| ISA spesifikasyonu | Register seti, instruction encoding, adresleme modları | |
-| NevexVM | ISA'yı yorumlayan/emüle eden sanal makine (C) | |
-| Assembler | Nevex assembly → makine kodu | |
-| Compiler | C-benzeri küçük bir dil → Nevex assembly/makine kodu | |
-| Nevex OS | VM (ve ileride FPGA) üzerinde çalışacak basit işletim sistemi | Planlanıyor |
+| ISA specification | `ISA.md`, `isa.h` | In repo |
+| Virtual machine (C) | `nevex.c` | In repo |
+| Assembler | `nevexas.c` | In repo |
+| Compiler (C-like language) | none yet | Planned |
+| Nevex OS | none yet | Planned |
+| FPGA implementation (Verilog/VHDL) | none yet | Planned |
 
-## Yol Haritası
+`nevexas.asm` is a sample assembly program, and `examples/` holds further programs.
 
-1. ISA spesifikasyonunun sabitlenmesi (register sayısı, instruction formatları, opcode tablosu)
-2. NevexVM — temel fetch-decode-execute döngüsü
-3. Assembler
-4. Basit compiler (C-benzeri dil → Nevex ISA)
-5. Nevex OS — user/kernel mode ayrımı, temel syscall arayüzü
-6. FPGA'ya taşıma (Verilog/VHDL ile donanım implementasyonu)
-
-## Derleme
+## Build
 
 ```sh
-git clone https://github.com/<kullanici>/nevex.git
+git clone https://github.com/naevui/nevex.git
 cd nevex
 make
 ```
 
-*(Build sistemi ve bağımlılıklar netleştikçe bu bölüm güncellenecek.)*
+## Roadmap
 
-## Lisans
+1. Freeze the ISA specification (register count, instruction formats, opcode table)
+2. VM: fetch-decode-execute loop
+3. Assembler
+4. Compiler for a small C-like language
+5. Nevex OS: user/kernel separation, basic syscall interface
+6. FPGA port
 
-*(Lisans belirlenecek — OSS olarak planlanıyor.)*
+## Contributing
 
-## Katkıda Bulunma
+The project is at an early stage. Issues and discussion about ISA design and architectural decisions are welcome.
 
-Proje henüz erken aşamada. ISA tasarımı ve mimari kararlar üzerine tartışma/issue açmak için katkı memnuniyetle karşılanır.
+## License
+
+Not yet chosen. The project is intended to be open source.
